@@ -1,10 +1,11 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Настройки приложения из .env"""
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file="../.env",
         extra="ignore",
     )
     
@@ -21,8 +22,8 @@ class Settings(BaseSettings):
     JWT_TOKEN_EXPIRE_MINUTES: int = 30
     
     # Настройки текущего сервиса
-    APP_HOST: str = "0.0.0.0"
-    APP_PORT: int = 8001
+    APP_HOST: str = Field(validation_alias="SERVICE_USERS_HOST", default="0.0.0.0")
+    APP_PORT: int = Field(validation_alias="SERVICE_USERS_PORT", default=8002)
     
     @property
     def DATABASE_URL(self) -> str:  # noqa

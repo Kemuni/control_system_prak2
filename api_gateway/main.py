@@ -4,16 +4,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from config import settings
-from database import engine
 from errors import ApiException
-from models import Base
-from routers import auth, users
+from routers import users, orders
 from schemas import ApiResponse, ErrorDetail
 
-Base.metadata.create_all(bind=engine)
-
-app = FastAPI(title="Users Service")
-
+app = FastAPI(
+    title="API Gateway",
+    description="API Gateway для микросервисной архитектуры. Проксирует запросы к сервисам Users и Orders.",
+    version="1.0.0"
+)
 
 # Обработчик ошибки валидации с Pydantic
 @app.exception_handler(RequestValidationError)
@@ -56,8 +55,24 @@ app.add_middleware(
 )
 
 v1_prefix = "/v1"
-app.include_router(auth.router, prefix=v1_prefix)
 app.include_router(users.router, prefix=v1_prefix)
+app.include_router(orders.router, prefix=v1_prefix)
+
+
+@app.get("/", tags=["Health"])
+async def root():
+    """Проверка работоспособности API Gateway"""
+    return {
+        "service": "api_gateway",
+        "status": "running",
+        "version": "1.0.0"
+    }
+
+
+@app.get("/health", tags=["Health"])
+async def health_check():
+    """Health check эндпоинт"""
+    return {"status": "healthy"}
 
 
 if __name__ == "__main__":

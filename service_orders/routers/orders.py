@@ -98,6 +98,7 @@ async def get_order(
     
     except Exception as e:
         logger.error(f"Order retrieval failed: {str(e)}")
+        if isinstance(e, ApiException): raise e
         raise ApiException(
             code="FETCH_ORDER_FAILED",
             message="Order retrieval failed"
@@ -211,6 +212,7 @@ async def update_order_status(
     except Exception as e:
         db.rollback()
         logger.error(f"Order update failed: {str(e)}")
+        if isinstance(e, ApiException): raise e
         raise ApiException(
             code="UPDATE_ORDER_FAILED",
             message="Order update failed"
@@ -267,6 +269,7 @@ async def cancel_order(
     except Exception as e:
         db.rollback()
         logger.error(f"Order cancel failed: {str(e)}")
+        if isinstance(e, ApiException): raise e
         raise ApiException(
             code="CANCEL_ORDER_FAILED",
             message="Cancel order failed"

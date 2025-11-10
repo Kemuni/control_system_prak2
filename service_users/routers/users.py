@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
@@ -5,6 +7,7 @@ from typing import Optional
 import math
 
 from database import get_db
+from errors import ApiException
 from models import User
 from schemas import (
     UserResponse, UserUpdate, ApiResponse, 
@@ -13,6 +16,7 @@ from schemas import (
 from auth import get_current_user, require_admin
 
 router = APIRouter(prefix="/users", tags=["Users"])
+logger = logging.getLogger(__name__)
 
 
 @router.get("/me", response_model=ApiResponse)
@@ -25,14 +29,8 @@ async def get_current_user_profile(current_user: User = Depends(get_current_user
             error=None
         )
     except Exception as e:
-        return ApiResponse(
-            success=False,
-            data=None,
-            error=ErrorDetail(
-                code="FETCH_PROFILE_FAILED",
-                message=str(e)
-            )
-        )
+        logger.error(f"Users service error: {str(e)}")
+        raise ApiException("FETCH_PROFILE_FAILED", "Error during fetching profile")
 
 
 @router.put("/me", response_model=ApiResponse)
@@ -47,14 +45,7 @@ async def update_current_user_profile(
         if update_data.email and update_data.email != current_user.email:
             existing_user = db.query(User).filter(User.email == update_data.email).first()
             if existing_user:
-                return ApiResponse(
-                    success=False,
-                    data=None,
-                    error=ErrorDetail(
-                        code="EMAIL_ALREADY_EXISTS",
-                        message="User with this email already exists"
-                    )
-                )
+                raise ApiException("EMAIL_ALREADY_EXISTS", "User with this email already exists")
         
         # Обновление полей
         if update_data.name is not None:
@@ -73,14 +64,8 @@ async def update_current_user_profile(
     
     except Exception as e:
         db.rollback()
-        return ApiResponse(
-            success=False,
-            data=None,
-            error=ErrorDetail(
-                code="UPDATE_PROFILE_FAILED",
-                message=str(e)
-            )
-        )
+        logger.error(f"Users service error: {str(e)}")
+        raise ApiException("UPDATE_PROFILE_FAILED", "Error during updating profile")
 
 
 @router.get("/", response_model=ApiResponse)
@@ -132,11 +117,5 @@ async def get_all_users(
         )
     
     except Exception as e:
-        return ApiResponse(
-            success=False,
-            data=None,
-            error=ErrorDetail(
-                code="FETCH_USERS_FAILED",
-                message=str(e)
-            )
-        )
+        logger.error(f"Users service error: {str(e)}")
+        raise ApiException("FETCH_USERS_FAILED", "Error during getting all users")
