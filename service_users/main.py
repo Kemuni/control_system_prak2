@@ -62,6 +62,7 @@ app.include_router(users.router, prefix=v1_prefix)
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
         "main:app",
         host=settings.APP_HOST,
