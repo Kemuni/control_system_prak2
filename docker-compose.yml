@@ -21,6 +21,8 @@ services:
       context: ./service_users
       dockerfile: Dockerfile
     container_name: control_system_users
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -44,6 +46,8 @@ services:
       context: ./service_orders
       dockerfile: Dockerfile
     container_name: control_system_orders
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -67,6 +71,8 @@ services:
       context: ./api_gateway
       dockerfile: Dockerfile
     container_name: control_system_gateway
+    env_file:
+      - .env
     environment:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ALGORITHM: ${JWT_ALGORITHM}
