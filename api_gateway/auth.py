@@ -34,14 +34,14 @@ async def verify_token(
 ) -> str:
     """Проверяем JWT токен и возвращаем его для дальнейшей передачи"""
     token = credentials.credentials
-    decode_access_token(token)  # Просто проверяем валидность
+    decode_access_token(token)
     return token
 
 
 async def get_token_optional(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False)),
 ) -> Optional[str]:
-    """Получаем токен, если он есть (для незащищенных эндпоинтов)"""
+    """Получаем токен, если он есть """
     if credentials:
         return credentials.credentials
     return None
