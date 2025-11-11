@@ -132,30 +132,6 @@ curl -X GET "http://localhost:8000/v1/users/me" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-### 4. Создание заказа
-
-```bash
-curl -X POST "http://localhost:8000/v1/orders/create" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "items": [
-      {
-        "name": "Товар 1",
-        "amount": 2,
-        "description": "Описание товара",
-        "price": 100.50
-      }
-    ]
-  }'
-```
-
-## Health Check
-
-API Gateway предоставляет эндпоинты для проверки состояния:
-- `GET /` - информация о сервисе
-- `GET /health` - health check
-
 ## Структура проекта
 
 ```
@@ -188,14 +164,3 @@ api_gateway/
 - Логирование ошибок при недоступности микросервисов
 - Структурированные ошибки в едином формате
 - Таймауты для запросов к микросервисам (30 секунд)
-
-## Production готовность
-
-Для production окружения рекомендуется:
-1. Настроить CORS с конкретными доменами
-2. Использовать HTTPS
-3. Добавить rate limiting
-4. Настроить централизованное логирование
-5. Добавить метрики и мониторинг
-6. Использовать переменные окружения для sensitive данных
-7. Настроить таймауты и retry политики
